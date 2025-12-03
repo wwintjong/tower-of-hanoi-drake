@@ -1,0 +1,94 @@
+directives:
+- add_model:
+    name: table
+    file: package://tower_of_hanoi_drake/assets/table.sdf
+- add_weld:
+    parent: world
+    child: table::table_link
+    X_PC:
+      translation: [0, 0, 0]
+      rotation: !Rpy { deg: [0, 0, 0]}
+
+- add_model:
+    name: peg_1
+    file: package://tower_of_hanoi_drake/assets/peg.sdf
+- add_weld:
+    parent: table::table_link
+    child: peg_1::peg_link
+    X_PC:
+      translation: [0.75, -1.0, 0.35]
+      rotation: !Rpy {deg: [0, 0, 0]}
+
+- add_model:
+    name: peg_2
+    file: package://tower_of_hanoi_drake/assets/peg.sdf
+- add_weld:
+    parent: table::table_link
+    child: peg_2::peg_link
+    X_PC:
+      translation: [0.75, 0.0, 0.35]
+      rotation: !Rpy {deg: [0, 0, 0]}
+
+- add_model:
+    name: peg_3
+    file: package://tower_of_hanoi_drake/assets/peg.sdf
+- add_weld:
+    parent: table::table_link
+    child: peg_3::peg_link
+    X_PC:
+      translation: [0.75, 1.0, 0.35]
+      rotation: !Rpy {deg: [0, 0, 0]}
+
+- add_model:
+    name: iiwa
+    file: package://drake_models/iiwa_description/urdf/iiwa14_primitive_collision.urdf
+    default_joint_positions:
+        iiwa_joint_1: [-1.57]
+        iiwa_joint_2: [0.1]
+        iiwa_joint_3: [0]
+        iiwa_joint_4: [-1.2]
+        iiwa_joint_5: [0]
+        iiwa_joint_6: [1.6]
+        iiwa_joint_7: [0]
+- add_weld:
+    parent: world
+    child: iiwa::iiwa_link_0
+    X_PC:
+      translation: [0, 0, 0.05]
+      rotation: !Rpy {deg: [0, 0, 0]}
+- add_model:
+    name: wsg
+    file: package://drake_models/wsg_50_description/sdf/schunk_wsg_50_with_tip.sdf
+- add_weld:
+    parent: iiwa::iiwa_link_7
+    child: wsg::body
+    X_PC:
+        translation: [0, 0, 0.09]
+        rotation: !Rpy { deg: [90, 0, 90]}
+
+# smallest disk
+
+- add_model:
+    name: disk_1
+    file: package://tower_of_hanoi_drake/assets/disk_1.sdf
+    default_free_body_pose:
+        torus_link:
+            translation: [0.75, 0, 3]
+            rotation: !Rpy {deg: [0, 0, 0]}
+      
+- add_model:
+    name: disk_2
+    file: package://tower_of_hanoi_drake/assets/disk_2.sdf
+    default_free_body_pose:
+        torus_link:
+            translation: [0.75, 0, 2.5]
+            rotation: !Rpy {deg: [0, 0, 0]}
+
+# largest disk
+- add_model:
+    name: disk_3
+    file: package://tower_of_hanoi_drake/assets/disk_3.sdf
+    default_free_body_pose:
+        torus_link:
+            translation: [0.75, 0, 2]
+            rotation: !Rpy {deg: [0, 0, 0]}

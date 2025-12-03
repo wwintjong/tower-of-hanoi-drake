@@ -1,0 +1,40 @@
+<sdf xmlns:drake="drake.mit.edu" version="1.7">
+  <model name="O">
+    <link name="O_body_link">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <mass>0.1</mass>
+        <pose>0.10401 0.09620 0.02000 0 0 0</pose>
+        <inertia>
+          <ixx>3.86949e-04</ixx>
+          <ixy>-1.10716e-07</ixy>
+          <ixz>-4.06447e-20</ixz>
+          <iyy>3.46182e-04</iyy>
+          <iyz>1.21934e-19</iyz>
+          <izz>7.06464e-04</izz>
+        </inertia>
+      </inertial>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>O.obj</uri>
+            <scale>1.5 1.5 1.5</scale>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision_000">
+        <geometry>
+          <mesh>
+            <uri>O.obj</uri>
+            <scale>1.5 1.5 1.5</scale>
+            <drake:declare_convex/>
+          </mesh>
+        </geometry>
+        <drake:proximity_properties>
+          <drake:rigid_hydroelastic/>
+          <drake:mu_dynamic>1.000</drake:mu_dynamic>
+        </drake:proximity_properties>
+      </collision>
+    </link>
+  </model>
+</sdf>

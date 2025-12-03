@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+  <model name="table">
+    <pose>0 0 0 0 0 0</pose>
+    <link name="table_link">
+      <inertial>
+        <mass>1.0</mass>
+        <inertia>
+          <ixx>0.005833</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.005833</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.005</izz>
+        </inertia>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>5 5 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>5 5 0.1</size>
+          </box>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0 1.0</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
