@@ -14,7 +14,7 @@
             <visual name="visual">
                 <geometry>
                 <mesh>
-                    <uri>disk_3.obj</uri>
+                    <uri>objects/disk_3.obj</uri>
                 </mesh>
                 </geometry>
                 <material>

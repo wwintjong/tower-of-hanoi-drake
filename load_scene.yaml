@@ -66,29 +66,44 @@ directives:
         translation: [0, 0, 0.09]
         rotation: !Rpy { deg: [90, 0, 90]}
 
-# smallest disk
-
-- add_model:
-    name: disk_1
-    file: package://tower_of_hanoi_drake/assets/disk_1.sdf
-    default_free_body_pose:
-        torus_link:
-            translation: [0.75, 0, 3]
-            rotation: !Rpy {deg: [0, 0, 0]}
-      
-- add_model:
-    name: disk_2
-    file: package://tower_of_hanoi_drake/assets/disk_2.sdf
-    default_free_body_pose:
-        torus_link:
-            translation: [0.75, 0, 2.5]
-            rotation: !Rpy {deg: [0, 0, 0]}
-
 # largest disk
+- add_model:
+    name: disk_4
+    file: package://tower_of_hanoi_drake/assets/disk_4.sdf
+    default_free_body_pose:
+        torus_link:
+            translation: [0.75, 0, 2]
+            rotation: !Rpy {deg: [0, 0, 0]}
+
+# 2nd largest disk
 - add_model:
     name: disk_3
     file: package://tower_of_hanoi_drake/assets/disk_3.sdf
     default_free_body_pose:
         torus_link:
-            translation: [0.75, 0, 2]
+            translation: [0.75, 0, 2.5]
             rotation: !Rpy {deg: [0, 0, 0]}
+
+# 3rd largest disk
+- add_model:
+    name: disk_2
+    file: package://tower_of_hanoi_drake/assets/disk_2.sdf
+    default_free_body_pose:
+        torus_link:
+            translation: [0.75, 0, 3]
+            rotation: !Rpy {deg: [0, 0, 0]}
+
+# smallest disk
+- add_model:
+    name: disk_1
+    file: package://tower_of_hanoi_drake/assets/disk_1.sdf
+    default_free_body_pose:
+        torus_link:
+            translation: [0.75, 0, 3.5]
+            rotation: !Rpy {deg: [0, 0, 0]}
+
+
+
+
+
+

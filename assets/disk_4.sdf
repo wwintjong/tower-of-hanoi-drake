@@ -1,0 +1,476 @@
+
+    <?xml version='1.0'?>
+    <sdf version='1.7'>
+        <model name='disk_4'>
+            <link name='torus_link'>
+            <inertial>
+                <mass>0.2</mass>
+                <inertia>
+                <ixx>0.001</ixx> <iyy>0.001</iyy> <izz>0.002</izz>
+                <ixy>0</ixy> <ixz>0</ixz> <iyz>0</iyz>
+                </inertia>
+            </inertial>
+
+            <visual name="visual">
+                <geometry>
+                <mesh>
+                    <uri>objects/disk_4.obj</uri>
+                </mesh>
+                </geometry>
+                <material>
+                <diffuse>0.2 0.2 0.8 1.0</diffuse>
+                </material>
+            </visual>
+    
+        <collision name='col_0'>
+            <pose>0.3000 0.0000 0 1.5708 0 1.5708</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_1'>
+            <pose>0.2986 0.0294 0 1.5708 0 1.6690</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_2'>
+            <pose>0.2942 0.0585 0 1.5708 0 1.7671</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_3'>
+            <pose>0.2871 0.0871 0 1.5708 0 1.8653</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_4'>
+            <pose>0.2772 0.1148 0 1.5708 0 1.9635</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_5'>
+            <pose>0.2646 0.1414 0 1.5708 0 2.0617</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_6'>
+            <pose>0.2494 0.1667 0 1.5708 0 2.1598</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_7'>
+            <pose>0.2319 0.1903 0 1.5708 0 2.2580</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_8'>
+            <pose>0.2121 0.2121 0 1.5708 0 2.3562</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_9'>
+            <pose>0.1903 0.2319 0 1.5708 0 2.4544</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_10'>
+            <pose>0.1667 0.2494 0 1.5708 0 2.5525</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_11'>
+            <pose>0.1414 0.2646 0 1.5708 0 2.6507</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_12'>
+            <pose>0.1148 0.2772 0 1.5708 0 2.7489</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_13'>
+            <pose>0.0871 0.2871 0 1.5708 0 2.8471</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_14'>
+            <pose>0.0585 0.2942 0 1.5708 0 2.9452</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_15'>
+            <pose>0.0294 0.2986 0 1.5708 0 3.0434</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_16'>
+            <pose>0.0000 0.3000 0 1.5708 0 3.1416</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_17'>
+            <pose>-0.0294 0.2986 0 1.5708 0 3.2398</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_18'>
+            <pose>-0.0585 0.2942 0 1.5708 0 3.3379</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_19'>
+            <pose>-0.0871 0.2871 0 1.5708 0 3.4361</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_20'>
+            <pose>-0.1148 0.2772 0 1.5708 0 3.5343</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_21'>
+            <pose>-0.1414 0.2646 0 1.5708 0 3.6325</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_22'>
+            <pose>-0.1667 0.2494 0 1.5708 0 3.7306</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_23'>
+            <pose>-0.1903 0.2319 0 1.5708 0 3.8288</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_24'>
+            <pose>-0.2121 0.2121 0 1.5708 0 3.9270</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_25'>
+            <pose>-0.2319 0.1903 0 1.5708 0 4.0252</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_26'>
+            <pose>-0.2494 0.1667 0 1.5708 0 4.1233</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_27'>
+            <pose>-0.2646 0.1414 0 1.5708 0 4.2215</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_28'>
+            <pose>-0.2772 0.1148 0 1.5708 0 4.3197</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_29'>
+            <pose>-0.2871 0.0871 0 1.5708 0 4.4179</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_30'>
+            <pose>-0.2942 0.0585 0 1.5708 0 4.5160</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_31'>
+            <pose>-0.2986 0.0294 0 1.5708 0 4.6142</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_32'>
+            <pose>-0.3000 0.0000 0 1.5708 0 4.7124</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_33'>
+            <pose>-0.2986 -0.0294 0 1.5708 0 4.8106</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_34'>
+            <pose>-0.2942 -0.0585 0 1.5708 0 4.9087</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_35'>
+            <pose>-0.2871 -0.0871 0 1.5708 0 5.0069</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_36'>
+            <pose>-0.2772 -0.1148 0 1.5708 0 5.1051</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_37'>
+            <pose>-0.2646 -0.1414 0 1.5708 0 5.2033</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_38'>
+            <pose>-0.2494 -0.1667 0 1.5708 0 5.3014</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_39'>
+            <pose>-0.2319 -0.1903 0 1.5708 0 5.3996</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_40'>
+            <pose>-0.2121 -0.2121 0 1.5708 0 5.4978</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_41'>
+            <pose>-0.1903 -0.2319 0 1.5708 0 5.5960</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_42'>
+            <pose>-0.1667 -0.2494 0 1.5708 0 5.6941</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_43'>
+            <pose>-0.1414 -0.2646 0 1.5708 0 5.7923</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_44'>
+            <pose>-0.1148 -0.2772 0 1.5708 0 5.8905</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_45'>
+            <pose>-0.0871 -0.2871 0 1.5708 0 5.9887</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_46'>
+            <pose>-0.0585 -0.2942 0 1.5708 0 6.0868</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_47'>
+            <pose>-0.0294 -0.2986 0 1.5708 0 6.1850</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_48'>
+            <pose>-0.0000 -0.3000 0 1.5708 0 6.2832</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_49'>
+            <pose>0.0294 -0.2986 0 1.5708 0 6.3814</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_50'>
+            <pose>0.0585 -0.2942 0 1.5708 0 6.4795</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_51'>
+            <pose>0.0871 -0.2871 0 1.5708 0 6.5777</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_52'>
+            <pose>0.1148 -0.2772 0 1.5708 0 6.6759</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_53'>
+            <pose>0.1414 -0.2646 0 1.5708 0 6.7741</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_54'>
+            <pose>0.1667 -0.2494 0 1.5708 0 6.8722</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_55'>
+            <pose>0.1903 -0.2319 0 1.5708 0 6.9704</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_56'>
+            <pose>0.2121 -0.2121 0 1.5708 0 7.0686</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_57'>
+            <pose>0.2319 -0.1903 0 1.5708 0 7.1668</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_58'>
+            <pose>0.2494 -0.1667 0 1.5708 0 7.2649</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_59'>
+            <pose>0.2646 -0.1414 0 1.5708 0 7.3631</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_60'>
+            <pose>0.2772 -0.1148 0 1.5708 0 7.4613</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_61'>
+            <pose>0.2871 -0.0871 0 1.5708 0 7.5595</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_62'>
+            <pose>0.2942 -0.0585 0 1.5708 0 7.6576</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+        <collision name='col_63'>
+            <pose>0.2986 -0.0294 0 1.5708 0 7.7558</pose>
+            <geometry>
+            <capsule> <radius>0.075</radius> <length>0.032397674240144746</length> </capsule>
+            </geometry>
+        </collision>
+        
+            </link>
+        </model>
+    </sdf>
+    
