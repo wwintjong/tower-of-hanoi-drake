@@ -66,7 +66,7 @@ if __name__ == "__main__":
     if not os.path.exists("assets"):
         os.makedirs("assets")
 
-    generate_torus("disk_1.sdf", "disk_1", radius=0.15, thickness=0.075, color="0 0 1 1")
-    generate_torus("disk_2.sdf", "disk_2", radius=0.2, thickness=0.075, color="0 0 1 1")
-    generate_torus("disk_3.sdf", "disk_3", radius=0.25, thickness=0.075, color="0 0 1 1")
-    generate_torus("disk_4.sdf", "disk_4", radius=0.3, thickness=0.075, color="0 0 1 1")
+    generate_torus("disk_1.sdf", "disk_1", radius=0.1, thickness=0.05, color="0 0 1 1")
+    generate_torus("disk_2.sdf", "disk_2", radius=0.15, thickness=0.05, color="0 0 1 1")
+    generate_torus("disk_3.sdf", "disk_3", radius=0.2, thickness=0.05, color="0 0 1 1")
+    generate_torus("disk_4.sdf", "disk_4", radius=0.25, thickness=0.05, color="0 0 1 1")
