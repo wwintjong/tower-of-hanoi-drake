@@ -20,14 +20,19 @@ from pydrake.all import (
     MultibodyPlant
 )
 
-PEG_X = 0.4
-SAFE_Z = 0.5
-TABLE_SURFACE_Z = 0.1 
-TUBE_RADIUS = 0.075 
-DISK_HEIGHT = 2 * TUBE_RADIUS 
+# --- CONFIGURATION ---
+PEG_X = 0.5 
+SAFE_Z = 0.7  # High clearance for crane arm
+TABLE_SURFACE_Z = 0.0 
+DISK_HEIGHT = 0.1 
 
-PICK_TARGET = [0.4, 0.0, 0.55]   
-PLACE_TARGET = [0.4, 0.75, 0.55] 
+# User Targets (Fingertip Goals)
+PICK_TARGET = [0.4, 0.0, 0.4]   
+PLACE_TARGET = [0.4, 0.5, 0.4]
+
+# Offset from WSG Body (palm) to Fingertips
+# Standard WSG50 is approx 12cm from body center to tips
+GRIPPER_FINGER_OFFSET = 0.12 
 
 def calculate_ik(plant, context, target_pose):
     ik = InverseKinematics(plant, context)
@@ -38,6 +43,7 @@ def calculate_ik(plant, context, target_pose):
         p_AQ_lower=target_pose.translation() - 0.005,
         p_AQ_upper=target_pose.translation() + 0.005,
     )
+    
     ik.AddOrientationConstraint(
         frameAbar=plant.world_frame(),
         R_AbarA=target_pose.rotation(),
@@ -55,6 +61,7 @@ def calculate_ik(plant, context, target_pose):
     q_current_iiwa = plant.GetPositions(context, iiwa_model)
     
     if not result.is_success():
+        print("IK Failed for pose:", target_pose.translation())
         return q_current_iiwa
     
     q_solution = result.GetSolution(ik.q())
@@ -69,9 +76,6 @@ def make_traj(q_start, q_end, duration):
     return PiecewisePolynomial.CubicHermite(breaks, samples, samples_dot)
 
 def create_controller_plant(time_step=1e-3):
-    """
-    Creates a plant for the controller. 
-    """
     controller_plant = MultibodyPlant(time_step=time_step)
     parser = Parser(controller_plant)
     
@@ -87,17 +91,22 @@ def create_controller_plant(time_step=1e-3):
     return controller_plant
 
 def reset_disks(plant, context):
-    """ Places disks at the calculated stack heights on Peg 0. """
-    disk_names = ["disk_3", "disk_2", "disk_1"]
+    """ Places disks at the calculated stack heights on Peg 0 (Middle). """
+    disk_names = ["disk_4", "disk_3", "disk_2", "disk_1"]
+    
+    # Calculate base height assuming stacking from z=0
+    # Disk center is at height/2 + index * height
+    base_z = DISK_HEIGHT / 2.0 
+
     for i, name in enumerate(disk_names):
         try:
             model = plant.GetModelInstanceByName(name)
             body = plant.GetBodyByName("torus_link", model)
-            z_center = TABLE_SURFACE_Z + TUBE_RADIUS + (i * DISK_HEIGHT)
+            z_center = base_z + (i * DISK_HEIGHT)
             X_World_Disk = RigidTransform(RotationMatrix(), [PEG_X, 0.0, z_center])
             plant.SetFreeBodyPose(context, body, X_World_Disk)
-        except:
-            pass
+        except Exception as e:
+            print(f"Could not reset {name}: {e}")
 
 def run_test_simulation():
     meshcat = StartMeshcat()
@@ -143,23 +152,53 @@ def run_test_simulation():
     reset_disks(plant, plant_context)
     
     q0 = plant.GetPositions(plant_context, iiwa_model)
+    
+    # 2. Settle Phase
+    settle_time = 2.0
     full_state_traj = PiecewisePolynomial.FirstOrderHold(
-        [0, 2.0], 
+        [0, settle_time + 0.1], 
         np.column_stack((np.concatenate((q0, np.zeros(7))), np.concatenate((q0, np.zeros(7)))))
     )
     traj_source.UpdateTrajectory(full_state_traj)
+    print(f"Settling for {settle_time}s...")
+    simulator.AdvanceTo(settle_time)
     
-    simulator.AdvanceTo(1.0)
-    R_WG = RotationMatrix.MakeXRotation(np.pi)
+    # --- CRANE GRASP ORIENTATION (Downwards) ---
+    # We want Gripper +Z (Approach) to align with World -Z.
+    # We want Gripper +Y (Fingers) to align with World +Y (Tangential pinch).
+    # R_WG columns: [Gx, Gy, Gz]
+    # Gz = (0, 0, -1) [Down]
+    # Gy = (0, 1, 0)  [Y axis]
+    # Gx = Gy cross Gz = (0, 1, 0) x (0, 0, -1) = (-1, 0, 0)
+    
+    R_Crane = RotationMatrix(np.column_stack((
+        [-1, 0, 0], # Gx
+        [0, 1, 0],  # Gy
+        [0, 0, -1]  # Gz (Approach Down)
+    )))
 
-    pose_pre_pick = RigidTransform(R_WG, [PICK_TARGET[0], PICK_TARGET[1], SAFE_Z])
-    pose_pick = RigidTransform(R_WG, PICK_TARGET)
-    pose_pre_place = RigidTransform(R_WG, [PLACE_TARGET[0], PLACE_TARGET[1], SAFE_Z])
-    pose_place = RigidTransform(R_WG, PLACE_TARGET)
+    # --- CALCULATE POSES ---
+    # The IK solves for the Body frame. We must offset the Z target by finger length.
     
+    # Pre-Pick (Hover above target)
+    p_pre_pick = np.array(PICK_TARGET) + [0, 0, 0.2] # 20cm above target
+    pose_pre_pick = RigidTransform(R_Crane, p_pre_pick + [0, 0, GRIPPER_FINGER_OFFSET])
+    
+    # Pick (Descend to target)
+    # Target is 0.4. We go slightly lower (0.35) to grasp the "sides" of the disk.
+    p_pick = np.array(PICK_TARGET) + [0, 0, -0.05] 
+    pose_pick = RigidTransform(R_Crane, p_pick + [0, 0, GRIPPER_FINGER_OFFSET])
+    
+    # Pre-Place (Hover above place target)
+    p_pre_place = np.array(PLACE_TARGET) + [0, 0, 0.2]
+    pose_pre_place = RigidTransform(R_Crane, p_pre_place + [0, 0, GRIPPER_FINGER_OFFSET])
+    
+    # Place (Descend to place target)
+    p_place = np.array(PLACE_TARGET) + [0, 0, -0.05]
+    pose_place = RigidTransform(R_Crane, p_place + [0, 0, GRIPPER_FINGER_OFFSET])
+
     def move_arm(target_pose, duration=2.5):
         start_time = context.get_time()
-        
         q_now = plant.GetPositions(plant_context, iiwa_model)
         q_next = calculate_ik(plant, plant_context, target_pose)
         
@@ -168,35 +207,48 @@ def run_test_simulation():
         
         num_samples = 100
         times = np.linspace(start_time, start_time + duration, num_samples)
-        
         qs = np.array([q_traj.value(t - start_time).flatten() for t in times])
         vs = np.array([v_traj.value(t - start_time).flatten() for t in times])
-        
         full_data = np.vstack((qs.T, vs.T))
         
         full_traj = PiecewisePolynomial.CubicShapePreserving(times, full_data)
         traj_source.UpdateTrajectory(full_traj)
-        
         simulator.AdvanceTo(start_time + duration)
 
-    def set_gripper(width_force, wait_time=1.0):
-        wsg_command.get_mutable_source_value(wsg_context).set_value([width_force, width_force])
+    def set_gripper(width, force=40.0, wait_time=1.0):
+        wsg_command.get_mutable_source_value(wsg_context).set_value([width, force])
         current_time = context.get_time()
         simulator.AdvanceTo(current_time + wait_time)
 
-    # TRAJECTORY
+    # --- EXECUTE CRANE SEQUENCE ---
+    print("Moving to Pre-Pick (Hover)...")
     move_arm(pose_pre_pick, duration=3.0)
-    set_gripper(0.15, wait_time=0.5) 
-    move_arm(pose_pick, duration=3.0)
-    set_gripper(0.15, wait_time=0.5)
-    set_gripper(-40.0, wait_time=1.5)
+    
+    print("Opening Gripper...")
+    set_gripper(0.12) # Open wide enough for the ring chord
+    
+    print("Descending to Pick...")
+    move_arm(pose_pick, duration=2.0)
+    
+    print("Grasping...")
+    set_gripper(0.05) # Close fingers
+    
+    print("Lifting...")
     move_arm(pose_pre_pick, duration=2.0)
+    
+    print("Moving to Pre-Place...")
     move_arm(pose_pre_place, duration=3.0)
+    
+    print("Lowering...")
     move_arm(pose_place, duration=3.0)
-    set_gripper(-40.0, wait_time=0.5)
-    set_gripper(0.11, wait_time=1.0) 
+    
+    print("Releasing...")
+    set_gripper(0.12)
+    
+    print("Retreating...")
     move_arm(pose_pre_place, duration=2.0)
-    simulator.AdvanceTo(context.get_time() + 3.0)
+    
+    print("Done.")
 
 if __name__ == "__main__":
     run_test_simulation()

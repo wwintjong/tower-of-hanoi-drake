@@ -16,7 +16,7 @@ directives:
     parent: table::table_link
     child: peg_1::peg_link
     X_PC:
-      translation: [0.65, -0.75, 0.35]
+      translation: [0.5, -0.6, 0.25]
       rotation: !Rpy {deg: [0, 0, 0]}
 
 - add_model:
@@ -26,7 +26,7 @@ directives:
     parent: table::table_link
     child: peg_2::peg_link
     X_PC:
-      translation: [0.65, 0.0, 0.35]
+      translation: [0.5, 0.0, 0.25]
       rotation: !Rpy {deg: [0, 0, 0]}
 
 - add_model:
@@ -36,14 +36,14 @@ directives:
     parent: table::table_link
     child: peg_3::peg_link
     X_PC:
-      translation: [0.65, 0.75, 0.35]
+      translation: [0.5, 0.6, 0.25]
       rotation: !Rpy {deg: [0, 0, 0]}
 
 - add_model:
     name: iiwa
     file: package://drake_models/iiwa_description/urdf/iiwa14_primitive_collision.urdf
     default_joint_positions:
-        iiwa_joint_1: [-1.57]
+        iiwa_joint_1: [2.9]
         iiwa_joint_2: [0.1]
         iiwa_joint_3: [0]
         iiwa_joint_4: [-1.2]
@@ -72,7 +72,7 @@ directives:
     file: package://tower_of_hanoi_drake/assets/disk_4.sdf
     default_free_body_pose:
         torus_link:
-            translation: [0.65, 0, 2]
+            translation: [0.5, 0, 2]
             rotation: !Rpy {deg: [0, 0, 0]}
 
 # 2nd largest disk
@@ -81,7 +81,7 @@ directives:
     file: package://tower_of_hanoi_drake/assets/disk_3.sdf
     default_free_body_pose:
         torus_link:
-            translation: [0.65, 0, 2.5]
+            translation: [0.5, 0, 2.5]
             rotation: !Rpy {deg: [0, 0, 0]}
 
 # 3rd largest disk
@@ -90,7 +90,7 @@ directives:
     file: package://tower_of_hanoi_drake/assets/disk_2.sdf
     default_free_body_pose:
         torus_link:
-            translation: [0.65, 0, 3]
+            translation: [0.5, 0, 3]
             rotation: !Rpy {deg: [0, 0, 0]}
 
 # smallest disk
@@ -99,10 +99,14 @@ directives:
     file: package://tower_of_hanoi_drake/assets/disk_1.sdf
     default_free_body_pose:
         torus_link:
-            translation: [0.65, 0, 3.5]
+            translation: [0.5, 0, 3.5]
             rotation: !Rpy {deg: [0, 0, 0]}
 
-
+# model_drivers:
+#     iiwa: !IiwaDriver
+#       control_mode: position_only
+#       hand_model_name: wsg
+#     wsg: !SchunkWsgDriver {}
 
 
 
