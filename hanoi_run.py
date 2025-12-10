@@ -26,44 +26,106 @@ from pydrake.all import (
 class GripperController(LeafSystem):
     def __init__(self):
         LeafSystem.__init__(self)
-        self.DeclareVectorInputPort("command", 2) 
-        self.DeclareVectorInputPort("state", 4)   
+        self.DeclareVectorInputPort("command", 2) # [width_des, force_limit]
+        self.DeclareVectorInputPort("state", 4)   # [q_left, q_right, v_left, v_right]
         self.DeclareVectorOutputPort("force", 2, self.CalcOutput)
-        self.kp = 2000.0
-        self.kd = 5.0
+        
+        # Internal State: [current_ramped_width]
+        self.DeclareDiscreteState([0.11]) 
+        
+        # Corrected argument names for periodic update
+        self.DeclarePeriodicDiscreteUpdateEvent(
+            period_sec=1e-3, 
+            offset_sec=0.0, 
+            update=self.UpdateState
+        )
+        
+        self.kp = 500.0
+        self.kd = 10.0 # Increased damping to reduce vibrations
+        
+        # TUNED PARAMETERS
+        self.closing_speed = 0.2   # m/s (5x faster so it closes fully during short waits)
+        self.grasp_threshold = 40.0 # N (Hold until this force is reached, preventing slip)
+        self.squeeze_penetration = 0.002 # m (Extra squeeze depth to maintain active grip)
+
+    def UpdateState(self, context, discrete_state):
+        # 1. Read Inputs
+        command = self.get_input_port(0).Eval(context)
+        state = self.get_input_port(1).Eval(context)
+        
+        target_width = command[0]
+        current_ramped_width = context.get_discrete_state(0).get_value()[0]
+        
+        # 2. Check Forces (PD Feedback Proxy)
+        q_left, v_left = state[0], state[2]
+        # Calculate the force the controller *wants* to apply at current virtual position
+        q_left_des = -current_ramped_width / 2.0
+        f_current = abs(self.kp * (q_left_des - q_left) - self.kd * v_left)
+        
+        # 3. Calculate Next Step
+        dt = 1e-3
+        step = self.closing_speed * dt
+        
+        is_trying_to_close = target_width < current_ramped_width
+        
+        if is_trying_to_close:
+            # CLOSING LOGIC
+            if f_current > self.grasp_threshold:
+                # We have a solid grip (force > 40N).
+                # Don't open, but don't close blindly. 
+                # Target slightly deeper than current actual position to maintain tension.
+                # (Current actual width is -2*q_left)
+                actual_width = -2.0 * q_left
+                next_width = actual_width - self.squeeze_penetration
+                
+                # Ensure we don't "squeeze" wider than we currently are by accident
+                next_width = min(next_width, current_ramped_width)
+            else:
+                # Free space closing or light contact -> Close normally
+                next_width = max(target_width, current_ramped_width - step)
+        else:
+            # OPENING LOGIC
+            # Always open immediately (release)
+            next_width = min(target_width, current_ramped_width + step)
+            
+        # 4. Write back to State
+        discrete_state.get_mutable_vector().SetFromVector([next_width])
 
     def CalcOutput(self, context, output):
         command = self.get_input_port(0).Eval(context)
         state = self.get_input_port(1).Eval(context)
-        width_des, force_limit = command[0], command[1]
+        force_limit = command[1]
         
-        # State: [q_left, q_right, v_left, v_right]
+        # Use the RAMPED width from our state machine
+        ramped_width = context.get_discrete_state(0).get_value()[0]
+        
         q_left, q_right = state[0], state[1]
         v_left, v_right = state[2], state[3]
         
-        # Target: Centered grasp
-        q_left_des = -width_des / 2.0
-        q_right_des = width_des / 2.0
+        q_left_des = -ramped_width / 2.0
+        q_right_des = ramped_width / 2.0
         
         # PD Calculation
         f_left = self.kp * (q_left_des - q_left) - self.kd * v_left
         f_right = self.kp * (q_right_des - q_right) - self.kd * v_right
         
-        # Force Limits
         f_left = np.clip(f_left, -force_limit, force_limit)
         f_right = np.clip(f_right, -force_limit, force_limit)
         
         output.SetFromVector([f_left, f_right])
-
+        
 # --- CONFIGURATION ---
 PEG_X = 0.5 
 SAFE_Z = 0.65 
 TABLE_SURFACE_Z = 0.0 
 DISK_HEIGHT = 0.1 
 
-# User Targets
+# PEG XY COORDS
 PICK_XY = [0.32, 0.0]   
-PLACE_XY = [0.32, 0.75]
+PLACE_XY = [0.375, 0.6]
+TOWER_1_XY = [0.38, -0.5]
+TOWER_2_XY = [0.32, 0.0]
+TOWER_3_XY = [0.375, 0.5]
 
 GRIPPER_FINGER_OFFSET = 0.12 
 
@@ -200,16 +262,16 @@ def run_test_simulation():
     R_Crane = RotationMatrix(np.column_stack(([1, 0, 0], [0, 0, -1], [0, 1, 0])))
 
     # Waypoints
-    p_pre_pick = np.array([PICK_XY[0], PICK_XY[1], 0.55]) 
+    p_pre_pick = np.array([TOWER_2_XY[0], TOWER_2_XY[1], 0.55]) 
     pose_pre_pick = RigidTransform(R_Crane, p_pre_pick + [0, 0, GRIPPER_FINGER_OFFSET])
     
-    p_pick = np.array([PICK_XY[0], PICK_XY[1], 0.225]) 
+    p_pick = np.array([TOWER_2_XY[0], TOWER_2_XY[1], 0.225]) 
     pose_pick = RigidTransform(R_Crane, p_pick + [0, 0, GRIPPER_FINGER_OFFSET])
     
-    p_pre_place = np.array([PLACE_XY[0], PLACE_XY[1], 0.55])
+    p_pre_place = np.array([TOWER_1_XY[0], TOWER_1_XY[1], 0.55])
     pose_pre_place = RigidTransform(R_Crane, p_pre_place + [0, 0, GRIPPER_FINGER_OFFSET])
     
-    p_place = np.array([PLACE_XY[0], PLACE_XY[1], 0.40])
+    p_place = np.array([TOWER_1_XY[0], TOWER_1_XY[1], 0.225])
     pose_place = RigidTransform(R_Crane, p_place + [0, 0, GRIPPER_FINGER_OFFSET])
 
     # IK
