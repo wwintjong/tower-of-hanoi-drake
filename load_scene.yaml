@@ -16,7 +16,7 @@ directives:
     parent: table::table_link
     child: peg_1::peg_link
     X_PC:
-      translation: [0.5, -0.6, 0.25]
+      translation: [0.5, -0.6, 0.2]
       rotation: !Rpy {deg: [0, 0, 0]}
 
 - add_model:
@@ -26,7 +26,7 @@ directives:
     parent: table::table_link
     child: peg_2::peg_link
     X_PC:
-      translation: [0.5, 0.0, 0.25]
+      translation: [0.5, 0.0, 0.2]
       rotation: !Rpy {deg: [0, 0, 0]}
 
 - add_model:
@@ -36,7 +36,7 @@ directives:
     parent: table::table_link
     child: peg_3::peg_link
     X_PC:
-      translation: [0.5, 0.6, 0.25]
+      translation: [0.5, 0.6, 0.2]
       rotation: !Rpy {deg: [0, 0, 0]}
 
 - add_model:

@@ -1,10 +1,18 @@
 import numpy as np
 import os
 
-def generate_torus(filename, disk_name, radius, thickness, color):
+def generate_torus(filename, disk_name, radius, thickness, color, friction_mu=2.0):
     """
     Because sdformat does not have the primitive for torus object, and loading the mesh does not work as expected, a workaround for this
     is to take a primitive object and create several duplicates at different angles to forma torus-like object.
+    
+    Args:
+        filename: Output SDF filename
+        disk_name: Name of the disk model
+        radius: Major radius of torus (distance from center to tube center)
+        thickness: Minor radius of torus (tube radius)
+        color: RGBA color string
+        friction_mu: Friction coefficient (default 2.0 for high grip)
     """
     sdf = f"""
     <?xml version='1.0'?>
@@ -48,6 +56,20 @@ def generate_torus(filename, disk_name, radius, thickness, color):
             <geometry>
             <capsule> <radius>{thickness}</radius> <length>{seg_len}</length> </capsule>
             </geometry>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>{friction_mu}</mu>
+                        <mu2>{friction_mu}</mu2>
+                    </ode>
+                </friction>
+                <contact>
+                    <ode>
+                        <kp>1000000</kp>
+                        <kd>100</kd>
+                    </ode>
+                </contact>
+            </surface>
         </collision>
         """
 
@@ -66,7 +88,9 @@ if __name__ == "__main__":
     if not os.path.exists("assets"):
         os.makedirs("assets")
 
-    generate_torus("disk_1.sdf", "disk_1", radius=0.1, thickness=0.05, color="0 0 1 1")
-    generate_torus("disk_2.sdf", "disk_2", radius=0.125, thickness=0.05, color="0 0 1 1")
-    generate_torus("disk_3.sdf", "disk_3", radius=0.15, thickness=0.05, color="0 0 1 1")
-    generate_torus("disk_4.sdf", "disk_4", radius=0.175, thickness=0.05, color="0 0 1 1")
+    # Generate disks with high friction (mu=2.0)
+    # You can adjust friction_mu parameter for each disk if needed
+    generate_torus("disk_1.sdf", "disk_1", radius=0.1, thickness=0.03, color="0 0 1 1", friction_mu=2.0)
+    generate_torus("disk_2.sdf", "disk_2", radius=0.125, thickness=0.03, color="0 0 1 1", friction_mu=2.0)
+    generate_torus("disk_3.sdf", "disk_3", radius=0.15, thickness=0.03, color="0 0 1 1", friction_mu=2.0)
+    generate_torus("disk_4.sdf", "disk_4", radius=0.175, thickness=0.03, color="0 0 1 1", friction_mu=2.0)
