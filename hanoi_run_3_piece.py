@@ -87,15 +87,17 @@ GRIPPER_FINGER_OFFSET = 0.12
 
 # Physical dimensions
 TABLE_SURFACE_Z = 0.05  # Ground level / table surface
+PLATFORM_HEIGHT = 0.15  # Platform thickness
+PLATFORM_TOP_Z = TABLE_SURFACE_Z + PLATFORM_HEIGHT  # 0.20m - where disks sit
 DISK_THICKNESS = 0.06   # Height of each torus
-# Grasp heights (0.04m below midpoint for full grasp of torus)
-GRASP_HEIGHTS = [0.04, 0.10, 0.16, 0.22]  # z-heights for positions 0, 1, 2, 3 on a tower
+# Grasp heights for 3 disks (accounting for platform elevation)
+GRASP_HEIGHTS = [0.20, 0.26, 0.32]  # z-heights for positions 0, 1, 2 on a tower
 
 # Tower configurations (grasp points)
 TOWERS = {
-    1: np.array([0.36, -0.475]),   # Tower 1 (left)
-    2: np.array([0.32, 0.0]),    # Tower 2 (middle)
-    3: np.array([0.36, 0.475])    # Tower 3 (right)
+    1: np.array([0.36, -0.5]),   # Tower 1 (left)
+    2: np.array([0.36, 0.0]),    # Tower 2 (middle)
+    3: np.array([0.36, 0.5])    # Tower 3 (right)
 }
 
 # Movement parameters
@@ -183,8 +185,9 @@ def create_controller_plant(time_step=1e-3):
     return controller_plant
 
 def reset_disks(plant, context):
-    """Places all disks at tower 2 (middle tower) in initial configuration"""
-    disk_names = ["disk_4", "disk_3", "disk_2", "disk_1"]
+    """Places 3 disks at tower 2 (middle tower) in initial configuration"""
+    # Only using 3 disks now: disk_3, disk_2, disk_1
+    disk_names = ["disk_3", "disk_2", "disk_1"]
     
     for i, name in enumerate(disk_names):
         try:
@@ -401,59 +404,47 @@ def run_simulation():
     # BUILD TRAJECTORY FOR TOWER OF HANOI
     # =================================================================
     
-    # IMPORTANT: Use a good seed configuration for IK solver
-    # This ensures the arm moves in a predictable, crane-like motion
-    q_seed_forward = np.array([0.0, 0.6, 0.0, -1.2, 0.0, 1.6, 0.0])
-    
-    # Initialize trajectory builder starting from current position
-    # but we'll set the plant to seed position for first IK calculation
-    traj_builder = TrajectoryBuilder(plant, plant_context, iiwa_model, settle_time, q0)
-    
-    # Override the current_q to use seed for IK (this will be used in first add_waypoint call)
-    traj_builder.current_q = q_seed_forward
-    
-    # Solve Tower of Hanoi for 4 disks from tower 2 to tower 3
-    moves = solve_hanoi(4, source=2, target=3, auxiliary=1)
+    # Solve Tower of Hanoi for 3 disks from tower 2 to tower 3
+    moves = solve_hanoi(3, source=2, target=3, auxiliary=1)
     print(f"\nTower of Hanoi solution ({len(moves)} moves):")
     for i, (from_t, to_t) in enumerate(moves, 1):
         print(f"  Move {i}: Tower {from_t} → Tower {to_t}")
     
     # Track disk positions on each tower (bottom to top)
-    tower_state = {1: [], 2: [4, 3, 2, 1], 3: []}  # disk 1 is smallest (on top)
+    # Each entry is (disk_number, current_z_height)
+    # Now using 3 disks: disk_3 (largest), disk_2 (medium), disk_1 (smallest)
+    tower_state = {
+        1: [],  # Empty
+        2: [(3, GRASP_HEIGHTS[0]), (2, GRASP_HEIGHTS[1]), (1, GRASP_HEIGHTS[2])],  # 3 disks on tower 2
+        3: []   # Empty
+    }
     
-    # Build trajectory
-    # CRITICAL: Start with a good seed configuration for IK
+    # IMPORTANT: Use seed configuration for first IK solution like original code
     q_seed_forward = np.array([0.0, 0.6, 0.0, -1.2, 0.0, 1.6, 0.0])
     plant.SetPositions(plant_context, iiwa_model, q_seed_forward)
     
-    # First, move from current position to seed position
+    # Build trajectory starting from settled position
     traj_builder = TrajectoryBuilder(plant, plant_context, iiwa_model, settle_time, q0)
     
-    # Add initial move to seed configuration (optional, but can help with smooth start)
-    # If you want to start from seed directly, use: 
-    # traj_builder = TrajectoryBuilder(plant, plant_context, iiwa_model, settle_time, q_seed_forward)
-    # and manually create a transition from q0 to q_seed_forward before starting the main sequence
-    
     for move_num, (from_tower, to_tower) in enumerate(moves, 1):
-        # Determine which disk we're moving and its current height
-        disk_num = tower_state[from_tower][-1]  # Top disk
-        disk_position_from = len(tower_state[from_tower]) - 1
-        pick_height = calculate_disk_height(disk_position_from)
+        # Get the top disk from source tower
+        disk_num, current_z_height = tower_state[from_tower][-1]  # Top disk with its z-height
         
-        # Determine where to place it
-        disk_position_to = len(tower_state[to_tower])
-        place_height = calculate_disk_height(disk_position_to)
+        # Determine new z-height on destination tower
+        # New position is at the bottom-most available spot
+        destination_position = len(tower_state[to_tower])  # 0 if empty, 1 if one disk, etc.
+        new_z_height = GRASP_HEIGHTS[destination_position]
         
         print(f"\n--- Move {move_num}/{len(moves)}: Disk {disk_num} from Tower {from_tower} to Tower {to_tower} ---")
-        print(f"    Pick at height {pick_height:.3f}m, Place at height {place_height:.3f}m")
+        print(f"    Current z-height: {current_z_height:.3f}m, New z-height: {new_z_height:.3f}m")
         
         # Execute pick and place
-        traj_builder.pick_disk(from_tower, pick_height)
-        traj_builder.place_disk(to_tower, place_height)
+        traj_builder.pick_disk(from_tower, current_z_height)
+        traj_builder.place_disk(to_tower, new_z_height)
         
         # Update tower state
         tower_state[from_tower].pop()
-        tower_state[to_tower].append(disk_num)
+        tower_state[to_tower].append((disk_num, new_z_height))
     
     # Build final trajectory
     continuous_traj, gripper_events, end_time = traj_builder.build()

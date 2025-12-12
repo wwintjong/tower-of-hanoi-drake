@@ -113,7 +113,7 @@ class GripperController(LeafSystem):
         f_right = np.clip(f_right, -force_limit, force_limit)
         
         output.SetFromVector([f_left, f_right])
-        
+
 # --- CONFIGURATION ---
 PEG_X = 0.5 
 SAFE_Z = 0.65 
@@ -273,6 +273,9 @@ def run_test_simulation():
     
     p_place = np.array([TOWER_1_XY[0], TOWER_1_XY[1], 0.225])
     pose_place = RigidTransform(R_Crane, p_place + [0, 0, GRIPPER_FINGER_OFFSET])
+
+    p_place = np.array([TOWER_2_XY[0], TOWER_2_XY[1], 0.55])
+    pose_pre_pick = RigidTransform(R_Crane, p_pre_pick + [0, 0, GRIPPER_FINGER_OFFSET])
 
     # IK
     print("Calculating IK solutions...")
